@@ -217,6 +217,14 @@ var paramsTests = []struct {
 		Order:      []string{"structUUID"},
 		Parameters: map[string]string{"structUUID": "string"},
 	},
+	{
+		Schema: &Schema{},
+		Link: &Link{
+			Rel:  "create",
+			HRef: NewHRef("/empty_create/"),
+		},
+		Parameters: map[string]string{},
+	},
 }
 
 func TestParameters(t *testing.T) {

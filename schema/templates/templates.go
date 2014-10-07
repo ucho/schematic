@@ -7,7 +7,7 @@ var templates = map[string]string{"field.tmpl": `{{initialCap .Name}} {{.Type}} 
 	"funcs.tmpl": `{{$Name := .Name}}
 {{$Def := .Definition}}
 {{range .Definition.Links}}
-  {{if eq .Rel "update" "create" }}
+  {{if .Schema}}
    type {{printf "%s-%s-Opts" $Name .Title | initialCap}} {{.GoType}}
   {{end}}
 
@@ -26,7 +26,7 @@ var templates = map[string]string{"field.tmpl": `{{initialCap .Name}} {{.Type}} 
       return s.{{methodCap .Method}}(fmt.Sprintf("{{.HRef}}", {{args .HRef}}))
     {{else}}
       {{$Var := initialLow $Name}}var {{$Var}} {{initialCap $Name}}
-      return {{if $Def.IsCustomType}}&{{end}}{{$Var}}, s.{{methodCap .Method}}(&{{$Var}}, fmt.Sprintf("{{.HRef}}", {{args .HRef}}), o)
+      return {{if $Def.IsCustomType}}&{{end}}{{$Var}}, s.{{methodCap .Method}}(&{{$Var}}, fmt.Sprintf("{{.HRef}}", {{args .HRef}}), {{if .Schema}}o{{else}}nil{{end}})
     {{end}}
   }
 {{end}}
@@ -232,7 +232,6 @@ type {{initialCap .Name}} {{goType .Definition}}
 `,
 }
 
-// Parse parses declared templates.
 func Parse(t *template.Template) (*template.Template, error) {
 	for name, s := range templates {
 		var tmpl *template.Template

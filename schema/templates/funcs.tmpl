@@ -1,7 +1,7 @@
 {{$Name := .Name}}
 {{$Def := .Definition}}
 {{range .Definition.Links}}
-  {{if eq .Rel "update" "create" }}
+  {{if .Schema}}
    type {{printf "%s-%s-Opts" $Name .Title | initialCap}} {{.GoType}}
   {{end}}
 
@@ -20,7 +20,7 @@
       return s.{{methodCap .Method}}(fmt.Sprintf("{{.HRef}}", {{args .HRef}}))
     {{else}}
       {{$Var := initialLow $Name}}var {{$Var}} {{initialCap $Name}}
-      return {{if $Def.IsCustomType}}&{{end}}{{$Var}}, s.{{methodCap .Method}}(&{{$Var}}, fmt.Sprintf("{{.HRef}}", {{args .HRef}}), o)
+      return {{if $Def.IsCustomType}}&{{end}}{{$Var}}, s.{{methodCap .Method}}(&{{$Var}}, fmt.Sprintf("{{.HRef}}", {{args .HRef}}), {{if .Schema}}o{{else}}nil{{end}})
     {{end}}
   }
 {{end}}

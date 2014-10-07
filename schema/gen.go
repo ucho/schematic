@@ -238,11 +238,11 @@ func (l *Link) Parameters() ([]string, map[string]string) {
 		order = append(order, name)
 		params[name] = def.GoType()
 	}
-	switch l.Rel {
-	case "update", "create":
+	switch {
+	case l.Schema != nil:
 		order = append(order, "o")
 		params["o"] = l.GoType()
-	case "instances":
+	case l.Rel == "instances":
 		order = append(order, "lr")
 		params["lr"] = "*ListRange"
 	}
